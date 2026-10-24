@@ -6,7 +6,7 @@ Finish a Moodle's database project, Get your credits!
 ## Link
 [visit our official website](https://124.220.163.237)
 
-powered by Tencent Cloud  
+Powered by Tencent Cloud  
 
 ## Tech Stack
 
