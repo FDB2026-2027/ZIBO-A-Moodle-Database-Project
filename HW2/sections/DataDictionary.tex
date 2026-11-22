@@ -1,0 +1,512 @@
+\section{Data Dictionary}
+The two tables below describe every entity and every relationship of Figure~\ref{fig:er}. For each attribute we report its name, a short description and its conceptual domain.
+
+\subsection{Entities Table}
+{\small
+\begin{longtable}{|p{.13\columnwidth}|p{.21\columnwidth}|p{.43\columnwidth}|p{.12\columnwidth}|}
+    \hline
+    \textbf{Entity} & \textbf{Description} & \textbf{Attributes} & \textbf{Identifier} \\\hline
+    \endfirsthead
+    \hline
+    \textbf{Entity} & \textbf{Description} & \textbf{Attributes} & \textbf{Identifier} \\\hline
+    \endhead
+
+    \textbf{User} & Any person registered in the system (student, teacher or operation officer). &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item User ID, identifier of the user, UUID;
+        \item Username, name used for log-in, text;
+        \item Email, e-mail address (optional), text;
+        \item Password Hash, hashed password used for log-in, text;
+        \item First Name, user first name (optional), text;
+        \item Last Name, user last name (optional), text;
+        \item Display Name, name shown in the pages, text;
+        \item Avatar URL, link to the profile picture (optional), text;
+        \item Status, account status (ACTIVE, DISABLED), text.
+    \end{itemize}
+    & User ID \\ \hline
+
+    \textbf{Role} & System-wide role that determines the permissions of a user. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Role ID, identifier of the role, UUID;
+        \item Code, role code (STUDENT, TEACHER, ADMIN), text;
+        \item Name, human-readable name, text.
+    \end{itemize}
+    & Role ID \\ \hline
+
+    \textbf{Refresh Token} & Log-in session of a user, used to renew the access without re-entering the password. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Token ID, identifier of the token, UUID;
+        \item Token Hash, SHA-256 hash of the token, text;
+        \item Expires At, expiry date and time, datetime;
+        \item Revoked, whether the token was revoked, boolean;
+        \item Created At, creation date and time, datetime.
+    \end{itemize}
+    & Token ID \\ \hline
+
+    \textbf{Course} & A course (lecture) taught in the school. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Course ID, identifier of the course, UUID;
+        \item Code, course code (e.g. FDB-2026), text;
+        \item Title, course title, text;
+        \item Summary, course description (optional), text;
+        \item Visibility, who can see the course (PUBLIC, ENROLLED\_ONLY), text;
+        \item Status, course status (DRAFT, PUBLISHED, ARCHIVED), text;
+        \item Start At, start date of the course (optional), datetime;
+        \item End At, end date of the course (optional), datetime.
+    \end{itemize}
+    & Course ID \\ \hline
+
+    \textbf{Section} & A part of the course page (e.g. a week or a chapter) grouping resources. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Section ID, identifier of the section, UUID;
+        \item Title, section title, text;
+        \item Summary, section description (optional), text;
+        \item Position, order of the section in the course, integer;
+        \item Visible, whether students can see it, boolean;
+        \item Available From, start of availability (optional), datetime;
+        \item Available Until, end of availability (optional), datetime.
+    \end{itemize}
+    & Section ID \\ \hline
+
+    \textbf{Resource} & A learning material published in a section: uploaded document, external link or video. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Resource ID, identifier of the resource, UUID;
+        \item Type, kind of resource (FILE, LINK, VIDEO), text;
+        \item Title, resource title, text;
+        \item Description, resource description (optional), text;
+        \item External URL, link for LINK/VIDEO resources (optional), text;
+        \item Position, order inside the section, integer;
+        \item Visible, whether students can see it, boolean.
+    \end{itemize}
+    & Resource ID \\ \hline
+
+    \textbf{File} & A file uploaded to the system, used as course material or as part of a submission. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item File ID, identifier of the file, UUID;
+        \item Name, stored file name, text;
+        \item Original Name, name of the file on the uploader's device, text;
+        \item Path, storage location, text;
+        \item Content Type, MIME type, text;
+        \item Size, size in bytes, integer;
+        \item Checksum, SHA-256 checksum of the content, text;
+        \item Purpose, use of the file (RESOURCE, SUBMISSION), text;
+        \item Uploaded At, upload date and time, datetime.
+    \end{itemize}
+    & File ID \\ \hline
+
+    \textbf{Assignment} & A task published in a course that students complete by handing in a submission. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Assignment ID, identifier of the assignment, UUID;
+        \item Title, assignment title, text;
+        \item Instructions, description of the task (optional), text;
+        \item Due At, deadline, datetime;
+        \item Max Points, maximum grade, decimal;
+        \item Allowed File Types, accepted extensions (optional), text;
+        \item Max File Size, maximum size of each file in bytes (optional), integer;
+        \item Late Policy, treatment of late work (REJECT, ACCEPT), text;
+        \item Status, assignment status (DRAFT, PUBLISHED, CLOSED), text.
+    \end{itemize}
+    & Assignment ID \\ \hline
+
+    \textbf{Submission} & The work handed in by a student for an assignment, together with its evaluation. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Submission ID, identifier of the submission, UUID;
+        \item Text, online text of the submission (optional), text;
+        \item Status, submission status (SUBMITTED, GRADED, RETURNED), text;
+        \item Grade, points assigned by the teacher (optional), decimal;
+        \item Feedback, teacher comment (optional), text;
+        \item Graded At, grading date and time (optional), datetime;
+        \item Is Late, whether it was submitted after the deadline, boolean;
+        \item Submitted At, submission date and time, datetime.
+    \end{itemize}
+    & Submission ID \\ \hline
+
+    \textbf{Quiz} & An online test of a course, available in a time window. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Quiz ID, identifier of the quiz, UUID;
+        \item Title, quiz title, text;
+        \item Instructions, instructions for students (optional), text;
+        \item Open At, opening date and time, datetime;
+        \item Close At, closing date and time, datetime;
+        \item Time Limit, duration of an attempt in seconds, integer;
+        \item Max Attempts, attempts allowed per student, integer;
+        \item Max Points, total points of the quiz, decimal;
+        \item Review Policy, when students can review answers (AFTER\_SUBMIT, AFTER\_CLOSE, NEVER), text;
+        \item Status, quiz status (DRAFT, PUBLISHED, CLOSED), text.
+    \end{itemize}
+    & Quiz ID \\ \hline
+
+    \textbf{Question} & A question belonging to a quiz. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Question ID, identifier of the question, UUID;
+        \item Type, question type (SINGLE, MULTIPLE, TRUE\_FALSE, SHORT), text;
+        \item Prompt, question text, text;
+        \item Points, points awarded for a correct answer, decimal;
+        \item Position, order inside the quiz, integer;
+        \item Options, list of choices (optional), JSON;
+        \item Answer Key, correct answer(s), JSON;
+        \item Explanation, explanation shown in review (optional), text.
+    \end{itemize}
+    & Question ID \\ \hline
+
+    \textbf{Quiz Attempt} & One attempt of a student at a quiz. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Attempt ID, identifier of the attempt, UUID;
+        \item Attempt Number, progressive number of the attempt (1, 2, \ldots{}), integer;
+        \item Status, attempt status (IN\_PROGRESS, SUBMITTED, EXPIRED), text;
+        \item Points, score obtained (optional), decimal;
+        \item Started At, start date and time, datetime;
+        \item Expires At, time by which the attempt must be submitted, datetime;
+        \item Submitted At, submission date and time (optional), datetime.
+    \end{itemize}
+    & Attempt ID \\ \hline
+
+    \textbf{Grade} & Gradebook entry: final grade of a student for one graded item (assignment or quiz) of a course. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Grade ID, identifier of the grade, UUID;
+        \item Item Type, kind of graded item (ASSIGNMENT, QUIZ), text;
+        \item Item ID, identifier of the graded assignment or quiz, UUID;
+        \item Points, points obtained, decimal;
+        \item Max Points, maximum points of the item, decimal;
+        \item Feedback, comment on the grade (optional), text.
+    \end{itemize}
+    & Grade ID \\ \hline
+
+    \textbf{Discussion Topic} & A thread opened in the forum of a course. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Topic ID, identifier of the topic, UUID;
+        \item Title, topic title, text;
+        \item Body, text of the opening message, text;
+        \item Created At, creation date and time, datetime.
+    \end{itemize}
+    & Topic ID \\ \hline
+
+    \textbf{Discussion Post} & A message written in a discussion topic, possibly in reply to another post. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Post ID, identifier of the post, UUID;
+        \item Body, text of the message, text;
+        \item Created At, creation date and time, datetime.
+    \end{itemize}
+    & Post ID \\ \hline
+
+    \textbf{Notification} & A message delivered to a user (announcement, new grade, deadline reminder, \ldots{}). &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Notification ID, identifier of the notification, UUID;
+        \item Type, notification type, text;
+        \item Title, short title, text;
+        \item Content, body of the message (optional), text;
+        \item Related Type, kind of object it refers to (optional), text;
+        \item Related ID, identifier of that object (optional), UUID;
+        \item Is Read, whether the user has read it, boolean;
+        \item Created At, creation date and time, datetime.
+    \end{itemize}
+    & Notification ID \\ \hline
+
+    \textbf{Audit Log} & Record of a relevant action performed in the system, used by the operation officers. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Log ID, identifier of the record, UUID;
+        \item Action, performed action (e.g. LOGIN, COURSE\_CREATE), text;
+        \item Target Type, kind of object affected (optional), text;
+        \item Target ID, identifier of that object (optional), text;
+        \item Detail, additional information (optional), text;
+        \item IP, IP address of the client (optional), text;
+        \item User Agent, browser/client description (optional), text;
+        \item Actor Username, username at the time of the action (optional), text;
+        \item Created At, date and time of the action, datetime.
+    \end{itemize}
+    & Log ID \\ \hline
+
+    \noalign{\vskip 10pt}
+    \caption{Entities of the Moodle Database ER schema}
+    \label{tab:entities} \\
+\end{longtable}
+}
+
+\subsection{Relationship Table}
+{\small
+\begin{longtable}{|p{.14\columnwidth}|p{.26\columnwidth}|p{.23\columnwidth}|p{.26\columnwidth}|}
+    \hline
+    \textbf{Relationship} & \textbf{Description} & \textbf{Component Entities} & \textbf{Attributes} \\\hline
+    \endfirsthead
+    \hline
+    \textbf{Relationship} & \textbf{Description} & \textbf{Component Entities} & \textbf{Attributes} \\\hline
+    \endhead
+
+    \textbf{Has Role} & Assigns system roles to users. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item User, (1, N);
+        \item Role, (0, N).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Own} & Associates each refresh token with the user it was issued to. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item User, (0, N);
+        \item Refresh Token, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Notify} & Delivers a notification to its recipient. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item User, (0, N);
+        \item Notification, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Perform} & Associates an audit record with the user who performed the action (system actions have no actor). &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item User, (0, N);
+        \item Audit Log, (0, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Teach} & Associates each course with the teacher responsible for it. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item User, (0, N);
+        \item Course, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Enroll} & Participation of a user in a course. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item User, (0, N);
+        \item Course, (0, N).
+    \end{itemize}
+    &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Role, course role (STUDENT, TEACHER), text;
+        \item Status, enrolment status (ACTIVE, SUSPENDED, COMPLETED), text;
+        \item Enrolled At, enrolment date and time, datetime;
+        \item Completed At, completion date and time (optional), datetime.
+    \end{itemize}
+    \\ \hline
+
+    \textbf{Contain} & Associates each section with its course. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Course, (0, N);
+        \item Section, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Include} & Associates each resource with the section where it is published. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Section, (0, N);
+        \item Resource, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Attach} & Associates a FILE resource with the uploaded file it shows. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Resource, (0, 1);
+        \item File, (0, N).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Upload} & Associates each file with the user who uploaded it. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item User, (0, N);
+        \item File, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Store In} & Associates each file with the course it belongs to. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Course, (0, N);
+        \item File, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Track Progress} & Records the progress of a user on a resource. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item User, (0, N);
+        \item Resource, (0, N).
+    \end{itemize}
+    &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Completed, whether the resource is completed, boolean;
+        \item Completed At, completion date and time (optional), datetime.
+    \end{itemize}
+    \\ \hline
+
+    \textbf{Publish} & Associates each assignment with its course. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Course, (0, N);
+        \item Assignment, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Submitted For} & Associates each submission with the assignment it answers. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Assignment, (0, N);
+        \item Submission, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Submit} & Associates each submission with the student who handed it in. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item User, (0, N);
+        \item Submission, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Grade Submission} & Associates a graded submission with the teacher who graded it. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item User, (0, N);
+        \item Submission, (0, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Submitted File} & Files attached to a submission. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Submission, (0, N);
+        \item File, (0, N).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Offer} & Associates each quiz with its course. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Course, (0, N);
+        \item Quiz, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Compose} & Associates each question with the quiz it belongs to. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Quiz, (0, N);
+        \item Question, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Attempt Of} & Associates each attempt with the quiz attempted. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Quiz, (0, N);
+        \item Quiz Attempt, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Make} & Associates each attempt with the student who made it. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item User, (0, N);
+        \item Quiz Attempt, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Answer} & Answer given to a question during an attempt. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Quiz Attempt, (0, N);
+        \item Question, (0, N).
+    \end{itemize}
+    &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Response, answer given by the student (optional), JSON;
+        \item Is Correct, outcome of automatic grading (optional), boolean;
+        \item Points, points obtained, decimal.
+    \end{itemize}
+    \\ \hline
+
+    \textbf{Receive Grade} & Associates each gradebook entry with the student it refers to. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item User, (0, N);
+        \item Grade, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Record} & Associates each gradebook entry with its course. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Course, (0, N);
+        \item Grade, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Host} & Associates each discussion topic with the course forum it belongs to. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Course, (0, N);
+        \item Discussion Topic, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Open} & Associates each discussion topic with its author. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item User, (0, N);
+        \item Discussion Topic, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Belong To} & Associates each post with its topic. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Discussion Topic, (0, N);
+        \item Discussion Post, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Write} & Associates each post with its author. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item User, (0, N);
+        \item Discussion Post, (1, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \textbf{Reply To} & Threads posts: a post may reply to a previous post. &
+    \begin{itemize}[leftmargin=*,nosep,before=\vspace{-\baselineskip}\leavevmode,after=\vspace{-\baselineskip}]
+        \item Discussion Post (Parent), (0, N);
+        \item Discussion Post (Reply), (0, 1).
+    \end{itemize}
+    &
+    
+    \\ \hline
+
+    \noalign{\vskip 10pt}
+    \caption{Relationships of the Moodle Database ER schema}
+    \label{tab:relationships} \\
+\end{longtable}
+}
