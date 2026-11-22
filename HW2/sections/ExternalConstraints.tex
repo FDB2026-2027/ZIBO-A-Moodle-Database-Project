@@ -1,0 +1,49 @@
+\section{External Constraints}
+The following constraints cannot be expressed with the ER notation (cardinalities and identifiers) and must be enforced by the DBMS (checks, triggers) or by the application layer:
+\begin{enumerate}
+    \item \textbf{Uniqueness of natural keys.} Username and Email (when present) are unique among users, Code is unique among courses and among roles, and Token Hash is unique among refresh tokens.
+
+    \item \textbf{Course teacher.} The user connected to a course through \textit{Teach} must have the TEACHER (or ADMIN) role. Only users with the TEACHER or ADMIN role can be enrolled in a course with course role TEACHER.
+
+    \item \textbf{One enrolment per course.} A user can be enrolled at most once in the same course (the pair user--course in \textit{Enroll} is unique).
+
+    \item \textbf{Access by role and enrolment (FR10).} Sections, resources, assignments, quizzes and forum topics of a course whose Visibility is ENROLLED\_ONLY can be read only by its teacher, by users with an ACTIVE enrolment in the course and by ADMIN users. Students see only sections and resources with Visible $=$ true and within the availability window (Available From -- Available Until). Only the teacher of a course (or an ADMIN) can create or modify its content.
+
+    \item \textbf{Consistency of dates.} For a course Start At $<$ End At; for a section Available From $<$ Available Until; for a quiz Open At $<$ Close At; Completed At of an enrolment is not earlier than Enrolled At.
+
+    \item \textbf{Resources and files.} A resource of type FILE must be connected through \textit{Attach} to exactly one file, whose Purpose is RESOURCE and which is stored in the same course; resources of type LINK or VIDEO must have an External URL.
+
+    \item \textbf{Submissions.} A user can hand in at most one submission per assignment and must be enrolled in the assignment's course with course role STUDENT. If the submission is made after Due At, Is Late is true, and it is accepted only when Late Policy is ACCEPT. Each submitted file must have Purpose SUBMISSION, must be uploaded by the same student, and must respect the Allowed File Types and Max File Size of the assignment.
+
+    \item \textbf{Grading of submissions.} The user connected through \textit{Grade Submission} must be a teacher of the assignment's course; Grade must be between 0 and the assignment's Max Points; Graded At is not earlier than Submitted At; Grade, Feedback and Graded At are present if and only if the submission has been graded.
+
+    \item \textbf{Quiz attempts.} An attempt can be started only between Open At and Close At by a student enrolled in the quiz's course. For each pair student--quiz, Attempt Number starts from 1, is consecutive, and cannot exceed Max Attempts. Expires At $=$ Started At $+$ Time Limit, but never later than Close At. An attempt not submitted by Expires At becomes EXPIRED.
+
+    \item \textbf{Answers.} An attempt can answer only questions of its own quiz, at most once per question; the Points of an answer are between 0 and the Points of the question; the Points of an attempt are the sum of the points of its answers. The Max Points of a quiz is the sum of the Points of its questions.
+
+    \item \textbf{Gradebook.} Item ID must identify an assignment (Item Type ASSIGNMENT) or a quiz (Item Type QUIZ) of the same course the grade is recorded in; each student has at most one grade per item; Points is between 0 and Max Points; the student must be enrolled in the course.
+
+    \item \textbf{Learning progress.} Progress can be recorded only for resources of courses in which the user is enrolled; Completed At is present if and only if Completed is true.
+
+    \item \textbf{Forum.} A post can reply only to a post of the same topic, and the replies cannot form a cycle. Only users enrolled in the course (or its teacher) can open topics and write posts.
+
+    \item \textbf{Log-in sessions.} A refresh token can be used only if it is not revoked and Expires At is in the future.
+
+    \item \textbf{Audit trail.} Audit records are append-only (never modified or deleted). Actor Username is stored so that the record remains meaningful even if the user is later deleted.
+
+
+
+
+
+
+    
+
+\begin{figure}[p]
+    \centering
+    % upright (portrait page); the image is slightly wider than the text block to keep it readable
+    \makebox[\textwidth][c]{\includegraphics[width=185mm]{figures/Relationship Schema.jpeg}}
+    \caption{Relational Schema}
+    \label{fig:er}
+\end{figure}
+\clearpage
+\end{enumerate}
