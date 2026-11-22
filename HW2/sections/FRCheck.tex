@@ -1,0 +1,25 @@
+\section{Functional Requirements Satisfaction Check}
+We now verify that the conceptual schema satisfies each functional requirement defined in Homework 1 (FR1--FR10), together with the non-functional requirement and the constraint that directly affect the data model. In details, the DBMS has to:
+\begin{itemize}
+    \item \textbf{FR1 -- Log-in of students, teachers and operation officers:} the entity \textit{User} stores Username and Password Hash for every user, whatever their role; Status allows disabling an account. The entity \textit{Refresh Token}, connected through \textit{Own}, keeps the active log-in sessions (external constraint 14).
+
+    \item \textbf{FR2 -- Students view their courses and access learning materials:} the relationship \textit{Enroll} gives the list of courses of a student. Each course is connected through \textit{Contain} to its \textit{Sections} and, through \textit{Include}, to the \textit{Resources} (with Position for the order); a resource reaches the uploaded document through \textit{Attach} and \textit{File}, or uses External URL for links and videos.
+
+    \item \textbf{FR3 -- Students enroll in and unenroll from courses:} enrolment creates an instance of \textit{Enroll} with Status ACTIVE and Enrolled At; unenrolment changes its Status (or removes the instance). External constraint 3 prevents double enrolment and constraint 4 links access to an active enrolment.
+
+    \item \textbf{FR4 -- Students submit assignments and take quizzes:} a submission is an instance of \textit{Submission} connected to the student (\textit{Submit}), to the assignment (\textit{Submitted For}) and to the uploaded files (\textit{Submitted File}). A quiz is taken through a \textit{Quiz Attempt} (\textit{Make}, \textit{Attempt Of}), and every answer is stored in the relationship \textit{Answer}. External constraints 7, 9 and 10 enforce deadlines, attempt limits and time limits.
+
+    \item \textbf{FR5 -- Teachers upload learning materials and publish announcements:} a teacher uploads files (\textit{Upload}, \textit{Store In}) and publishes them as resources in a section (\textit{Include}, \textit{Attach}). Announcements are delivered to the course participants as \textit{Notifications} (\textit{Notify}), and teachers can also open a \textit{Discussion Topic} in the course forum (\textit{Host}, \textit{Open}).
+
+    \item \textbf{FR6 -- Teachers see the participant students of a course:} the relationship \textit{Enroll}, filtered on the attribute Role $=$ STUDENT, returns the participants of a course with their enrolment Status; \textit{Track Progress} additionally shows how far each participant has got.
+
+    \item \textbf{FR7 -- Teachers create assignments and quizzes:} assignments are connected to the course through \textit{Publish}, quizzes through \textit{Offer}, and the questions of a quiz through \textit{Compose}. All the parameters required (deadline, maximum points, allowed files, late policy, time window, time limit, number of attempts, review policy) are attributes of \textit{Assignment}, \textit{Quiz} and \textit{Question}.
+
+    \item \textbf{FR8 -- Teachers manage student grades and results:} a teacher grades a submission through \textit{Grade Submission} (Grade, Feedback, Graded At); quiz results are computed from the relationship \textit{Answer} and stored in Quiz Attempt.Points. The entity \textit{Grade}, connected to the student (\textit{Receive Grade}) and to the course (\textit{Record}), forms the gradebook of each course (external constraints 8 and 11).
+
+    \item \textbf{FR9 -- Operation officers manage user accounts:} an operation officer is a \textit{User} holding the ADMIN role (\textit{Has Role}); they can create users, change their Status and assign roles through \textit{Has Role}. Their actions are traced in \textit{Audit Log} through \textit{Perform}.
+
+    \item \textbf{FR10 -- Access according to roles and permissions:} global permissions derive from the roles of a user (\textit{Has Role}) and course-level permissions from \textit{Teach} and from the Role attribute of \textit{Enroll}; external constraints 2 and 4 state the access rules that the application enforces on this data.
+
+    \item \textbf{NFR1 and C3 -- Protection of accounts and only authorised modifications:} passwords and tokens are stored only as hashes (Password Hash, Token Hash), tokens can expire or be revoked, and every relevant modification is recorded in \textit{Audit Log} with the actor, the IP address and the time.
+\end{itemize}
